@@ -1,14 +1,14 @@
-import 'dart:async'; //timer coutdown
-import 'package:flutter/material.dart'; //courosel slider
-import 'package:carousel_slider/carousel_slider.dart'; //ambil data
-import 'package:http/http.dart' as http; // ambil data API JSON
+import 'dart:async'; //timer coundown
+import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart'; //carousel slider
+import 'package:http/http.dart' as http; //ambil data API
 import 'dart:convert'; //decode JSON
 import 'package:geolocator/geolocator.dart'; //GPS
-import 'package:geocoding/geocoding.dart'; //Konversi GPS
-import 'package:intl/intl.dart'; //formater number
-import 'package:permission_handler/permission_handler.dart'; // Izin handler
+import 'package:geocoding/geocoding.dart'; //konversi GPS
+import 'package:intl/intl.dart'; //Format Nummber
+import 'package:permission_handler/permission_handler.dart'; //Izin Handler
 import 'package:shared_preferences/shared_preferences.dart'; // cache lokal
-import 'package:string_similarity/string_similarity.dart'; //fuzyy match string
+import 'package:string_similarity/string_similarity.dart'; // fuzzy match string
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,12 +19,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final CarouselController _controller = CarouselController();
-  int _curentIndex = 0;
+  int _currentIndex = 0;
 
-  final posterList = const <String>[
+  final posterlist = const <String>[
     'assets/images/ramadhan.jpg',
-    'assets/images/idul fitri.jpg',
-    'assets/images/idul adha.jpg',
+    'assets/images/idulfitri.png',
+    'assets/images/iduladha..png',
+    'assets/images/bg_morning.png',
+    'assets/images/bg_night.png',
   ];
 
   @override
@@ -39,7 +41,7 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 height: 130,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 47, 141, 133),
+                  color: Colors.amber,
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: SingleChildScrollView(
@@ -53,12 +55,13 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             decoration: BoxDecoration(),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Image.asset('assets/images/ic_menu_doa.png'),
                                 Text(
-                                  'Doa & Zikir',
+                                  'Doa & zikir',
                                   style: TextStyle(
-                                    fontFamily: 'poppinsRegular',
+                                    fontFamily: 'PoppinsRegular',
                                     color: Colors.white,
                                   ),
                                 ),
@@ -74,6 +77,29 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             decoration: BoxDecoration(),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/ic_menu_zakat.png'),
+                                Text(
+                                  'Zakat',
+                                  style: TextStyle(
+                                    fontFamily: 'PoppinsRegular',
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Image.asset(
                                   'assets/images/ic_menu_jadwal_sholat.png',
@@ -81,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                                 Text(
                                   'Jadwal Sholat',
                                   style: TextStyle(
-                                    fontFamily: 'poppinsRegular',
+                                    fontFamily: 'PoppinsRegular',
                                     color: Colors.white,
                                   ),
                                 ),
@@ -97,35 +123,15 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             decoration: BoxDecoration(),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  'assets/images/ic_menu_video_kajian.png',
+                                  'assets/images/ic_play_video_kajian.png',
                                 ),
                                 Text(
-                                  'Video kajian',
+                                  'Video Kajian',
                                   style: TextStyle(
-                                    fontFamily: 'poppinsRegular',
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(),
-                            child: Column(
-                              children: [
-                                Image.asset('assets/images/ic_menu_zakat.png'),
-                                Text(
-                                  'zakat',
-                                  style: TextStyle(
-                                    fontFamily: 'poppinsRegular',
+                                    fontFamily: 'PoppinsRegular',
                                     color: Colors.white,
                                   ),
                                 ),
@@ -139,26 +145,71 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            _buildCarouselSection(),
+            // ========================================
+            //[CAROUSEL SECTION]
+            // ========================================
+            _buildCaroucelSection(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCarouselSection() {
+  Widget _buildCaroucelSection() {
     return Column(
       children: [
         const SizedBox(height: 20),
         CarouselSlider.builder(
-          itemCount: posterList.length,
+          itemCount: posterlist.length,
           itemBuilder: (context, index, realindex) {
-            final poster = posterList[index];
-            return Container(child: Image.asset (poster));
+            final poster = posterlist[index];
+            return Container(
+              margin: EdgeInsets.all(15),
+              child: ClipRRect(
+                borderRadius: BorderRadiusGeometry.circular(20),
+                child: Image.asset(
+                  poster,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            );
           },
-          options: CarouselOptions(),
+          options: CarouselOptions(
+            autoPlay: true,
+            height: 180,
+            enlargeCenterPage: true,
+            viewportFraction: 0.7,
+            onPageChanged: (index, reason) {
+              setState(() => _currentIndex = index);
+            },
+          ),
+        ),
+         // DOT INDIKATOR carousel
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: posterlist.asMap().entries.map((entry) {
+            return GestureDetector(
+              onTap: () => _currentIndex.animateToPage(entry.key),
+              child: Container(
+                width: 10,
+                height: 10,
+                margin: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _currentIndex == entry.key
+                    ? Colors.amber
+                    : Colors.grey[400],
+                ),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );
   }
+}
+
+extension on int {
+  void animateToPage(int key) {}
 }
