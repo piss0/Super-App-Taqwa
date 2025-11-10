@@ -1,14 +1,14 @@
-import 'dart:async'; //timer coundown
+import 'dart:async'; //timer countdown
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart'; //carousel slider
-import 'package:http/http.dart' as http; //ambil data API
+import 'package:http/http.dart' as http; //ambil data API GPS
 import 'dart:convert'; //decode JSON
 import 'package:geolocator/geolocator.dart'; //GPS
 import 'package:geocoding/geocoding.dart'; //konversi GPS
-import 'package:intl/intl.dart'; //Format Nummber
-import 'package:permission_handler/permission_handler.dart'; //Izin Handler
+import 'package:intl/intl.dart'; // formater number
+import 'package:permission_handler/permission_handler.dart'; // izin handler
 import 'package:shared_preferences/shared_preferences.dart'; // cache lokal
-import 'package:string_similarity/string_similarity.dart'; // fuzzy match string
+import 'package:string_similarity/string_similarity.dart'; // fuzzy match
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,144 +18,82 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final CarouselController _controller = CarouselController();
-  int _currentIndex = 0;
+  final CarouselController controller = CarouselController();
+  int currenIndex = 0;
 
-  final posterlist = const <String>[
+final posterlist = const <String>[
     'assets/images/ramadhan.jpg',
     'assets/images/idulfitri.png',
     'assets/images/iduladha..png',
     'assets/images/bg_morning.png',
     'assets/images/bg_night.png',
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                width: double.infinity,
-                height: 130,
-                decoration: BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset('assets/images/ic_menu_doa.png'),
-                                Text(
-                                  'Doa & zikir',
-                                  style: TextStyle(
-                                    fontFamily: 'PoppinsRegular',
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset('assets/images/ic_menu_zakat.png'),
-                                Text(
-                                  'Zakat',
-                                  style: TextStyle(
-                                    fontFamily: 'PoppinsRegular',
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/ic_menu_jadwal_sholat.png',
-                                ),
-                                Text(
-                                  'Jadwal Sholat',
-                                  style: TextStyle(
-                                    fontFamily: 'PoppinsRegular',
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/ic_play_video_kajian.png',
-                                ),
-                                Text(
-                                  'Video Kajian',
-                                  style: TextStyle(
-                                    fontFamily: 'PoppinsRegular',
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // ========================================
-            //[CAROUSEL SECTION]
-            // ========================================
-            _buildCaroucelSection(),
+            // =========================
+            // MENU SECTION
+            // =========================
+            _buidMenuGridSection(),
+            // =========================
+            // CAROUSEL SECTION
+            // =========================
+            _buildCarouselSection(),
           ],
         ),
       ),
     );
   }
+  // =========================
+  // MENU ITEM WIDGET
+  // =========================
+  Widget _buidManuItem(
+    String iconPath, 
+    String title, 
+    String routName,
+    ) {
+    return Column(
+      children: [
+        Image.asset(iconPath, width: 35,),
+        Text(title)
+      ],
+    );
+  }
 
-  Widget _buildCaroucelSection() {
+  // =========================
+  // MENU GRID SECTION WIDGET
+  // =========================
+  Widget _buidMenuGridSection() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.count(crossAxisCount: 4, 
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        _buidManuItem('assets/images/doa.jpg',
+         'Doa Harian',
+          '/doa'),
+        _buidManuItem('assets/images/doa.jpg',
+         'Video Kajian',
+          '/doa'),
+        _buidManuItem('assets/images/doa.jpg',
+         'Jadwal Sholat',
+          '/doa'),
+        _buidManuItem('assets/images/doa.jpg',
+         'Zahat',
+          '/doa'),
+      ],
+      ),
+    );
+  }
+
+  // =========================
+  // CAROUSEL SECTION WIDGET
+  // =========================
+  Widget _buildCarouselSection() {
     return Column(
       children: [
         const SizedBox(height: 20),
@@ -164,42 +102,46 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (context, index, realindex) {
             final poster = posterlist[index];
             return Container(
-              margin: EdgeInsets.all(15),
-              child: ClipRRect(
-                borderRadius: BorderRadiusGeometry.circular(20),
-                child: Image.asset(
-                  poster,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+              child: Container(
+                margin: EdgeInsets.all(15),
+                child: ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(20),
+                  child: Image.asset(
+                    poster,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             );
           },
           options: CarouselOptions(
             autoPlay: true,
-            height: 180,
+            height: 270,
             enlargeCenterPage: true,
             viewportFraction: 0.7,
             onPageChanged: (index, reason) {
-              setState(() => _currentIndex = index);
+              setState(() {
+                currenIndex = index;
+              });
             },
           ),
         ),
-         // DOT INDIKATOR carousel
+        // DOT INDIKATOR CAROUSEL
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: posterlist.asMap().entries.map((entry) {
             return GestureDetector(
-              onTap: () => _currentIndex.animateToPage(entry.key),
+              onTap: () => currenIndex.animateToPage(entry.key),
               child: Container(
                 width: 10,
                 height: 10,
                 margin: EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _currentIndex == entry.key
-                    ? Colors.amber
-                    : Colors.grey[400],
+                  color: currenIndex == entry.key
+                      ? Colors.amber
+                      : Colors.grey[400],
                 ),
               ),
             );
