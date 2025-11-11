@@ -20,14 +20,31 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final CarouselController _controller = CarouselController();
   int _currentIndex = 0;
+  bool isLoading = true;
+  Duration? timeRemaining;
+  Timer? countdownTimer;
+  String location = "Mengambil lokasi...";
+  String prayTime = "Loading...";
+  String backgroundImage = 'assets/images/bg_morning.png';
+  
 
-final posterlist = const <String>[
+  final Doa = 'assets/images/doa.jpg';
+
+  final posterlist = const <String>[
     'assets/images/ramadhan.jpg',
     'assets/images/idulfitri.png',
     'assets/images/iduladha..png',
     'assets/images/bg_morning.png',
     'assets/images/bg_night.png',
   ];
+
+  Future _getBackgroundImage(DateTime now) async {
+    if (now.hour < 12) {
+      return 'assets/images/bg_morning.png';
+    } else if (now.hour < 10) {
+      return 'assets/images/bg_night.png';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +57,8 @@ final posterlist = const <String>[
               //[MENU WAKTU SHOLAT BY LOKASI]
               //=========================================
               _buildHeroSection(),
-        
+              const SizedBox(height: 65),
+
               // ========================================
               //[MENU SECTION]
               // ========================================
@@ -60,42 +78,114 @@ final posterlist = const <String>[
   //[MENU HERO WIDGET]
   //=======================================
   Widget _buildHeroSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 20,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget> [
-            Text('Assalamu\'alaikum',
-            style: TextStyle(
-              fontFamily: 'PoppinsRegular',
-              color: Colors.black,
-              fontSize: 16,
-              ),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Color(0xFFB3E5FC),
+            borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(30),
+              bottomLeft: Radius.circular(30),
             ),
-            Text('Ngargoyoso',
-            style: TextStyle(
-              fontFamily: 'PoppinsSemiBold',
-              fontSize: 22
-              ),
+            image: DecorationImage(
+              image: AssetImage('assets/images/bg_morning.png'),
+              fit: BoxFit.cover,
             ),
-            Text(DateFormat('HH:mm').format(DateTime.now(),),
-            style: TextStyle(
-              fontFamily: 'PoppinsBold',
-              fontSize: 20,
-              height: 1.2
-            ),),
-          ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Assalamu\'alaikum',
+                  style: TextStyle(
+                    fontFamily: 'PoppinsRegular',
+                    color: Colors.white70,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  'Ngargoyoso',
+                  style: TextStyle(
+                    fontFamily: 'PoppinsSemiBold',
+                    fontSize: 22,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  DateFormat('HH:mm').format(DateTime.now()),
+                  style: TextStyle(
+                    fontFamily: 'PoppinsBold',
+                    fontSize: 50,
+                    height: 1.2,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        //=======WAKTU SHOLAT SELANJUTNYA=========
+        Positioned(
+          bottom: -55,
+          left: 20,
+          right: 20,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 2,
+                  offset: Offset(0, 4),
+                  color: Colors.amber.withOpacity(0.4),
+                ),
+              ],
+            ),
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Column(
+              children: [
+                Text(
+                  'waktu sholat selanjutnya',
+                  style: TextStyle(
+                    fontFamily: 'PoppinsRegular',
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  'ASHAR',
+                  style: TextStyle(
+                    fontFamily: 'PoppinsBold',
+                    fontSize: 20,
+                    color: Colors.amber,
+                  ),
+                ),
+                Text(
+                  '14:22',
+                  style: TextStyle(
+                    fontFamily: 'PoppinsBold',
+                    fontSize: 28,
+                    color: Colors.black,
+                  ),
+                ),
+                Text(
+                  '5Jam 10 Menit',
+                  style: TextStyle(
+                    fontFamily: 'PoppinsRegular',
+                    fontSize: 13,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
